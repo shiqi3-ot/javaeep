@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.dao.CommentDao">
+    
+    <resultMap id="CommentResultMap" type="com.blog.entity.Comment">
+        <id property="id" column="id"/>
+        <result property="blogId" column="blog_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="content" column="content"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <association property="user" javaType="com.blog.entity.User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="username"/>
+            <result property="nickname" column="nickname"/>
+        </association>
+    </resultMap>
+    
+    <select id="findById" resultMap="CommentResultMap">
+        SELECT c.*, u.username, u.nickname
+        FROM comment c
+        LEFT JOIN user u ON c.user_id = u.id
+        WHERE c.id = #{id}
+    </select>
+    
+    <select id="findByBlogId" resultMap="CommentResultMap">
+        SELECT c.*, u.username, u.nickname
+        FROM comment c
+        LEFT JOIN user u ON c.user_id = u.id
+        WHERE c.blog_id = #{blogId} AND c.status = 1
+        ORDER BY c.create_time ASC
+    </select>
+    
+    <select id="findParentComments" resultMap="CommentResultMap">
+        SELECT c.*, u.username, u.nickname
+        FROM comment c
+        LEFT JOIN user u ON c.user_id = u.id
+        WHERE c.blog_id = #{blogId} AND c.parent_id = 0 AND c.status = 1
+        ORDER BY c.create_time ASC
+    </select>
+    
+    <select id="findReplies" resultMap="CommentResultMap">
+        SELECT c.*, u.username, u.nickname
+        FROM comment c
+        LEFT JOIN user u ON c.user_id = u.id
+        WHERE c.parent_id = #{parentId} AND c.status = 1
+        ORDER BY c.create_time ASC
+    </select>
+    
+    <select id="findByPage" resultMap="CommentResultMap">
+        SELECT c.*, u.username, u.nickname, b.title as blog_title
+        FROM comment c
+        LEFT JOIN user u ON c.user_id = u.id
+        LEFT JOIN blog b ON c.blog_id = b.id
+        ORDER BY c.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="countByBlogId" resultType="long">
+        SELECT COUNT(*) FROM comment WHERE blog_id = #{blogId} AND status = 1
+    </select>
+    
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM comment
+    </select>
+    
+    <insert id="insert" parameterType="com.blog.entity.Comment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comment (blog_id, user_id, parent_id, content, author_name, author_email, ip_address, status)
+        VALUES (#{blogId}, #{userId}, #{parentId}, #{content}, #{authorName}, #{authorEmail}, #{ipAddress}, #{status})
+    </insert>
+    
+    <update id="update" parameterType="com.blog.entity.Comment">
+        UPDATE comment SET
+            content = #{content},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM comment WHERE id = #{id}
+    </delete>
+    
+    <update id="updateStatus">
+        UPDATE comment SET status = #{status} WHERE id = #{id}
+    </update>
+    
+</mapper>

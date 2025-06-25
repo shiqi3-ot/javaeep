@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.dao.MessageDao">
+    
+    <resultMap id="MessageResultMap" type="com.blog.entity.Message">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="content" column="content"/>
+        <result property="replyContent" column="reply_content"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="status" column="status"/>
+        <result property="isReplied" column="is_replied"/>
+        <result property="createTime" column="create_time"/>
+        <result property="replyTime" column="reply_time"/>
+        <association property="user" javaType="com.blog.entity.User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="username"/>
+            <result property="nickname" column="nickname"/>
+        </association>
+    </resultMap>
+    
+    <select id="findById" resultMap="MessageResultMap">
+        SELECT m.*, u.username, u.nickname
+        FROM message m
+        LEFT JOIN user u ON m.user_id = u.id
+        WHERE m.id = #{id}
+    </select>
+    
+    <select id="findAll" resultMap="MessageResultMap">
+        SELECT m.*, u.username, u.nickname
+        FROM message m
+        LEFT JOIN user u ON m.user_id = u.id
+        WHERE m.status = 1
+        ORDER BY m.create_time DESC
+    </select>
+    
+    <select id="findByPage" resultMap="MessageResultMap">
+        SELECT m.*, u.username, u.nickname
+        FROM message m
+        LEFT JOIN user u ON m.user_id = u.id
+        ORDER BY m.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="findUnreplied" resultMap="MessageResultMap">
+        SELECT m.*, u.username, u.nickname
+        FROM message m
+        LEFT JOIN user u ON m.user_id = u.id
+        WHERE m.is_replied = 0 AND m.status = 1
+        ORDER BY m.create_time DESC
+    </select>
+    
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM message
+    </select>
+    
+    <select id="countUnreplied" resultType="long">
+        SELECT COUNT(*) FROM message WHERE is_replied = 0 AND status = 1
+    </select>
+    
+    <insert id="insert" parameterType="com.blog.entity.Message" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO message (user_id, author_name, author_email, content, ip_address, status)
+        VALUES (#{userId}, #{authorName}, #{authorEmail}, #{content}, #{ipAddress}, #{status})
+    </insert>
+    
+    <update id="update" parameterType="com.blog.entity.Message">
+        UPDATE message SET
+            author_name = #{authorName},
+            author_email = #{authorEmail},
+            content = #{content},
+            reply_content = #{replyContent},
+            status = #{status},
+            is_replied = #{isReplied}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM message WHERE id = #{id}
+    </delete>
+    
+    <update id="reply">
+        UPDATE message SET
+            reply_content = #{replyContent},
+            is_replied = 1,
+            reply_time = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <update id="updateStatus">
+        UPDATE message SET status = #{status} WHERE id = #{id}
+    </update>
+    
+</mapper>
