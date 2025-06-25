@@ -22,9 +22,5 @@
     <typeAliases>
         <package name="com.blog.entity"/>
     </typeAliases>
-    
-    <!-- 插件配置 -->
-    <plugins>
-        <!-- 分页插件可以在这里配置 -->
-    </plugins>
+
 </configuration>

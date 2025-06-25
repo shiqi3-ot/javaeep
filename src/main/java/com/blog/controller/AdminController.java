@@ -178,7 +178,7 @@ public class AdminController {
      * 评论管理页面
      */
     @RequestMapping("/comments")
-    public String commentManage(@RequestParam(defaultValue = "1") int page, Model model) {
+    public String commentManage(@RequestParam(defaultValue = "1", required = false) int page, Model model) {
         PageInfo<Comment> pageInfo = commentService.findByPage(page, 10);
         model.addAttribute("pageInfo", pageInfo);
         return "admin/comment-list";

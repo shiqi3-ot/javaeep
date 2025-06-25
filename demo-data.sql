@@ -1,6 +1,7 @@
 -- 演示数据插入脚本
 -- 注意：请先执行 blog_system.sql 创建表结构
 
+SET FOREIGN_KEY_CHECKS = 0;
 USE blog_system;
 
 -- 插入演示用户数据
@@ -10,11 +11,11 @@ INSERT INTO `user` (`username`, `password`, `nickname`, `email`, `role`, `status
 ('reader1', 'e10adc3949ba59abbe56e057f20f883e', '普通读者', 'reader1@blog.com', 'user', 1, NOW());
 
 -- 插入博客分类数据
-INSERT INTO `category` (`name`, `description`, `sort_order`, `status`, `create_time`) VALUES
-('技术分享', 'Java、Spring、数据库等技术文章', 1, 1, NOW()),
-('生活随笔', '日常生活感悟和随想', 2, 1, NOW()),
-('学习笔记', '学习过程中的笔记和总结', 3, 1, NOW()),
-('项目实战', '实际项目开发经验分享', 4, 1, NOW());
+INSERT INTO `category` (`name`, `description`, `sort_order`, `create_time`) VALUES
+('技术分享', 'Java、Spring、数据库等技术文章', 1, NOW()),
+('生活随笔', '日常生活感悟和随想', 2, NOW()),
+('学习笔记', '学习过程中的笔记和总结', 3, NOW()),
+('项目实战', '实际项目开发经验分享', 4, NOW());
 
 -- 插入博客文章数据
 INSERT INTO `blog` (`title`, `summary`, `content`, `author_id`, `category_id`, `tags`, `status`, `is_top`, `view_count`, `comment_count`, `create_time`, `update_time`) VALUES
@@ -66,3 +67,5 @@ INSERT INTO `message` (`author_name`, `author_email`, `content`, `is_replied`, `
 UPDATE blog SET comment_count = (SELECT COUNT(*) FROM comment WHERE blog_id = blog.id AND status = 1);
 
 COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 0;

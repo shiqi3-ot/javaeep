@@ -99,11 +99,11 @@
                                             </td>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${not empty comment.username}">
-                                                        ${comment.username}
+                                                    <c:when test="${not empty comment.user.username}">
+                                                        ${comment.user.username}
                                                     </c:when>
                                                     <c:otherwise>
-                                                        ${comment.nickname}
+                                                        ${comment.user.nickname}
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
@@ -168,23 +168,23 @@
                 <c:if test="${pageInfo.pages > 1}">
                     <nav aria-label="评论分页">
                         <ul class="pagination justify-content-center">
-                            <c:if test="${pageInfo.hasPreviousPage}">
+                            <c:if test="${pageInfo.hasPrevious}">
                                 <li class="page-item">
-                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/comments?page=${pageInfo.prePage}">
+                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/comments?page=${pageInfo.pageNum-1}">
                                         <i class="fas fa-chevron-left"></i> 上一页
                                     </a>
                                 </li>
                             </c:if>
                             
-                            <c:forEach var="num" items="${pageInfo.navigatepageNums}">
+                            <c:forEach var="num" items="${pageInfo.pages}">
                                 <li class="page-item ${num == pageInfo.pageNum ? 'active' : ''}">
                                     <a class="page-link" href="${pageContext.request.contextPath}/admin/comments?page=${num}">${num}</a>
                                 </li>
                             </c:forEach>
                             
-                            <c:if test="${pageInfo.hasNextPage}">
+                            <c:if test="${pageInfo.hasNext}">
                                 <li class="page-item">
-                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/comments?page=${pageInfo.nextPage}">
+                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/comments?page=${pageInfo.pageNum+1}">
                                         下一页 <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>

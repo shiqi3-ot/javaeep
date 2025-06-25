@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS message (
 -- 插入初始数据
 -- 管理员用户 (密码: admin123)
 INSERT INTO user (username, password, email, nickname, role) VALUES 
-('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi', 'admin@blog.com', '管理员', 'admin');
+('admin', 'admin123', 'admin@blog.com', '管理员', 'admin');
 
 -- 默认分类
 INSERT INTO category (name, description, sort_order) VALUES 
